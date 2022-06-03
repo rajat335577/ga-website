@@ -33,17 +33,21 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Run MSBuild
+    - name: Build Solution
       run: |
-         msbuild .\SimpleFrameworkApp.sln
-         dir
-         tree
-       
-    - name: 'Run Azure webapp deploy action using publish profile credentials'
-      uses: azure/webapps-deploy@v2
-      with: 
+        msbuild.exe EzRep.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: EZRepBundle
+        path: "./_build"
+    
+    - name: Publish Artifacts to Azure
+      uses: Azure/webapps-deploy@v2
+      with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
-        package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/ga-website/bin/*'
+        package: "./_build"
   
     # Azure logout 
     - name: logout
