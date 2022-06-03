@@ -1,6 +1,6 @@
 name: Deploy ASP.NET MVC App deploy to Azure Web App
 
-on: [push]
+on: workflow_dispatch
 
 permissions:
       id-token: write
