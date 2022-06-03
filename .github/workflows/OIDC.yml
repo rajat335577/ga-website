@@ -8,7 +8,7 @@ permissions:
 
 env:
   AZURE_WEBAPP_NAME: SimpleFrameworkApp    # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: ${{ github.workspace }}/_build      # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_PACKAGE_PATH: ${{ github.workspace }}\_build      # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build-and-deploy:
