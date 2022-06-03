@@ -8,7 +8,7 @@ permissions:
 
 env:
   AZURE_WEBAPP_NAME: SimpleFrameworkApp    # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_PACKAGE_PATH: $GITHUB_WORKSPACE/_build      # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build-and-deploy:
@@ -34,23 +34,24 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
   
     - name: MakeDirectory
-      run: mkdir ./_build
+      run: mkdir ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
       
     - name: Build Solution
       run: |
-        msbuild.exe SimpleFrameworkApp.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
+        msbuild.exe SimpleFrameworkApp.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl=${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+        dir ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
         
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: EZRepBundle
-        path: "./_build"
+        name: Artifact
+        path: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
     
     - name: Publish Artifacts to Azure
       uses: Azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
-        package: "./_build"
+        package: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
   
     # Azure logout 
     - name: logout
